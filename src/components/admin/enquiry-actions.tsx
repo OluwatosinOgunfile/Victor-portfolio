@@ -1,0 +1,5 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export function EnquiryActions({id,status}:{id:string;status:string}){const router=useRouter();const[busy,setBusy]=useState(false);const[body,setBody]=useState("");const call=async(payload:object)=>{setBusy(true);await fetch(`/api/admin/enquiries/${id}`,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});setBusy(false);router.refresh()};return <><div className="detail-actions"><select value={status} disabled={busy} onChange={e=>call({action:"status",status:e.target.value})}>{["New","Contacted","Qualified","Won","Closed"].map(x=><option key={x}>{x}</option>)}</select><button disabled={busy} onClick={()=>call({action:"retry"})}>Retry notification</button></div><form className="note-form" onSubmit={async e=>{e.preventDefault();if(!body.trim())return;await call({action:"note",body});setBody("")}}><textarea rows={4} value={body} onChange={e=>setBody(e.target.value)} placeholder="Add a private note…"/><button disabled={busy}>Add note</button></form></>}

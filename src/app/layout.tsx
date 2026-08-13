@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AnalyticsTracker } from "@/components/analytics";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://victor.dev"),
+  metadataBase: new URL("https://victor-portfolio-seven-nu.vercel.app"),
   title: "Victor — Business Systems That Drive Growth",
   description: "Custom web applications, automation and AI systems that save time, reduce costs and help ambitious businesses scale.",
   keywords: ["Full Stack Developer", "Business Automation", "Custom Software", "Web Applications", "AI Integration"],
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
+        <AnalyticsTracker />
         {children}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       </body>

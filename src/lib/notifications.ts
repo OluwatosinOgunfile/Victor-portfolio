@@ -1,0 +1,38 @@
+import nodemailer from "nodemailer";
+import { createServiceClient } from "./supabase-server";
+
+async function record(enquiryId: string, channel: "whatsapp" | "email", status: "sent" | "failed", providerId?: string, error?: unknown) {
+  const db = createServiceClient();
+  await db.from("notification_deliveries").insert({ enquiry_id: enquiryId, channel, status, provider_id: providerId ?? null, error_message: error instanceof Error ? error.message.slice(0, 500) : error ? String(error).slice(0, 500) : null });
+}
+
+async function sendWhatsApp(enquiryId: string, name: string, link: string) {
+  const { TWILIO_ACCOUNT_SID: sid, TWILIO_AUTH_TOKEN: token, TWILIO_WHATSAPP_FROM: from, TWILIO_WHATSAPP_TO: to, TWILIO_CONTENT_SID: contentSid } = process.env;
+  if (!sid || !token || !from || !to) throw new Error("Twilio WhatsApp is not configured");
+  const body = new URLSearchParams({ From: from, To: to });
+  if (contentSid) { body.set("ContentSid", contentSid); body.set("ContentVariables", JSON.stringify({ 1: name, 2: link })); }
+  else body.set("Body", `New portfolio enquiry from ${name}. View securely: ${link}`);
+  const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, { method: "POST", headers: { Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`, "Content-Type": "application/x-www-form-urlencoded" }, body });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.message || "Twilio rejected the message");
+  await record(enquiryId, "whatsapp", "sent", result.sid);
+}
+
+async function sendEmail(enquiryId: string, name: string, link: string) {
+  const user = process.env.GMAIL_SMTP_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass) throw new Error("Gmail SMTP is not configured");
+  const transport = nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+  const info = await transport.sendMail({ from: `Victor Portfolio <${user}>`, to: process.env.ADMIN_EMAIL || user, subject: `New project enquiry from ${name}`, text: `A new project enquiry has arrived from ${name}. Sign in to view it securely: ${link}`, html: `<p>A new project enquiry has arrived from <strong>${name}</strong>.</p><p><a href="${link}">Sign in to view the enquiry securely</a></p>` });
+  await record(enquiryId, "email", "sent", info.messageId);
+}
+
+export async function notifyNewEnquiry(enquiryId: string, name: string) {
+  const link = `${process.env.NEXT_PUBLIC_SITE_URL || "https://victor-portfolio-seven-nu.vercel.app"}/admin/enquiries/${enquiryId}`;
+  try { await sendWhatsApp(enquiryId, name, link); return { channel: "whatsapp", sent: true }; }
+  catch (error) {
+    await record(enquiryId, "whatsapp", "failed", undefined, error);
+    try { await sendEmail(enquiryId, name, link); return { channel: "email", sent: true }; }
+    catch (emailError) { await record(enquiryId, "email", "failed", undefined, emailError); return { channel: null, sent: false }; }
+  }
+}
