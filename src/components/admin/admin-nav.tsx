@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart3, ExternalLink, Inbox, LayoutDashboard, LogOut } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 
 const links = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
@@ -13,7 +14,7 @@ const links = [
 export function AdminNav({ unread = 0 }: { unread?: number }) {
   const pathname = usePathname();
   return <>
-    <div className="admin-sidebar-head"><Link href="/" className="admin-brand"><span>V</span><div>victor.<small>ADMIN PORTAL</small></div></Link></div>
+    <div className="admin-sidebar-head"><BrandLogo compact /></div>
     <div className="nav-label">Workspace</div>
     <nav className="admin-nav">{links.map(({ href, label, icon: Icon, exact }) => {
       const active = exact ? pathname === href : pathname.startsWith(href);

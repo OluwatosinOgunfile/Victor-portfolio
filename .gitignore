@@ -9,6 +9,8 @@
 /build
 .vercel
 *.log
+.chrome-*
+navill-*.png
 
 # local environment files
 .env*

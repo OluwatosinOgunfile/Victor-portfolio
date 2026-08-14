@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,6 +12,7 @@ import {
   Menu, MessageCircle, Phone, Rocket, ShieldCheck, Sparkles, Target,
   Workflow, X, Zap,
 } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 
 const fade = {
   hidden: { opacity: 0, y: 28 },
@@ -85,15 +87,15 @@ export function Portfolio() {
 
     <header className="nav-wrap">
       <nav className="nav container" aria-label="Main navigation">
-        <a href="#top" className="logo" aria-label="Victor home"><span>V</span> victor.</a>
+        <BrandLogo href="#top" compact />
         <div className="nav-links">
-          <a href="#services">Services</a><a href="#work">Work</a><a href="#process">Process</a><a href="#about">Why me</a>
+          <a href="#services">Services</a><a href="#work">Work</a><a href="#founder">Founder</a><a href="#process">Process</a>
         </div>
         <a href="#contact" className="btn btn-small">Let&apos;s talk <ArrowUpRight size={16} /></a>
         <button className="menu-btn" onClick={() => setMenu(!menu)} aria-label="Toggle menu">{menu ? <X /> : <Menu />}</button>
       </nav>
       {menu && <motion.div className="mobile-menu" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <a href="#services">Services</a><a href="#work">Work</a><a href="#process">Process</a><a href="#about">Why me</a><a href="#contact">Let&apos;s talk</a>
+        <a href="#services">Services</a><a href="#work">Work</a><a href="#founder">Founder</a><a href="#process">Process</a><a href="#contact">Let&apos;s talk</a>
       </motion.div>}
     </header>
 
@@ -180,6 +182,11 @@ export function Portfolio() {
       ].map(({Icon,title,copy},i)=><Reveal key={title} delay={i*.05}><div className="why-item"><div><Icon/></div><section><h3>{title}</h3><p>{copy}</p></section><span>0{i+1}</span></div></Reveal>)}</div>
     </div></section>
 
+    <section id="founder" className="section founder"><div className="founder-orb"/><div className="container founder-grid">
+      <Reveal className="founder-portrait-wrap"><div className="founder-frame"><Image src="/victor-founder.png" alt="Victor Tonye Iyoyo, founder and CEO of Navill Tech" fill sizes="(max-width: 900px) 100vw, 45vw" className="founder-photo" priority={false}/><div className="founder-image-shade"/><div className="founder-badge"><span>VI</span><div><small>FOUNDER &amp; CEO</small><b>Victor Tonye Iyoyo</b></div></div></div><div className="founder-accent-card"><Sparkles/><span>Building technology around real business outcomes.</span></div></Reveal>
+      <Reveal><div className="section-heading founder-copy"><span className="kicker">MEET THE FOUNDER</span><h2>Technical depth. <span className="gradient-text">Business instinct.</span></h2><p className="founder-intro">I&apos;m Victor Tonye Iyoyo, founder and CEO of Navill Tech—a full-stack developer focused on turning operational challenges into clear, scalable digital products.</p><p>Over the past five years, I&apos;ve designed and delivered web applications, marketplaces, restaurant systems, dashboards and automation workflows from initial concept through deployment. My work sits at the intersection of product thinking, thoughtful design and reliable engineering.</p><p>I founded Navill Tech with a simple belief: software should do more than look impressive. It should remove friction, improve the customer experience and create measurable room for a business to grow.</p></div><div className="founder-stats"><div><strong>5+</strong><span>Years building digital products</span></div><div><strong>Full-stack</strong><span>Strategy through deployment</span></div><div><strong>Lagos</strong><span>Serving businesses globally</span></div></div><div className="founder-signoff"><div className="signature">Victor.</div><div><b>Victor Tonye Iyoyo</b><small>Founder &amp; CEO, Navill Tech</small></div></div></Reveal>
+    </div></section>
+
     <section className="section tech"><div className="container"><Reveal className="section-heading centered"><span className="kicker">MODERN. RELIABLE. PROVEN.</span><h2>The right tools for the job.</h2><p>A modern technology stack chosen for speed, security and long-term maintainability.</p></Reveal><Reveal><div className="tech-cloud">{['React','Next.js','TypeScript','Node.js','PostgreSQL','Supabase','Tailwind CSS','REST APIs','Stripe','Cloud'].map((t,i)=><div key={t} className={`tech-pill p${i%4}`}><Code2 size={17}/>{t}</div>)}</div></Reveal></div></section>
 
     <section className="section testimonials"><div className="container"><Reveal className="section-heading centered"><span className="kicker">CLIENT STORIES</span><h2>Trusted to solve problems that <span className="muted">matter.</span></h2></Reveal><div className="testimonial-grid">{[
@@ -195,6 +202,6 @@ export function Portfolio() {
     </div></section>
 
     <a className="whatsapp-float" href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="Chat with Victor on WhatsApp" data-track="floating_whatsapp" data-event="contact_click"><MessageCircle/><span>Chat on WhatsApp</span></a>
-    <footer><div className="container footer-top"><div><a href="#top" className="logo"><span>V</span> victor.</a><p>Business systems that save time, increase revenue and create room to grow.</p></div><div><b>Explore</b><a href="#services">Services</a><a href="#work">Selected work</a><a href="#process">Process</a></div><div><b>Connect</b><a href="#"><Linkedin size={14}/> LinkedIn</a><a href="#"><Github size={14}/> GitHub</a><a href="mailto:victoriyoyo2493@gmail.com"><Mail size={14}/> Email</a><a href={whatsappUrl} target="_blank" rel="noopener noreferrer"><MessageCircle size={14}/> WhatsApp</a></div><a href="#top" className="to-top" aria-label="Back to top"><ArrowUpRight/></a></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} Victor. All rights reserved.</span><span>Designed with intention. Built for impact. <Globe2 size={14}/></span></div></footer>
+    <footer><div className="container footer-top"><div><BrandLogo href="#top"/><p>Business systems that save time, increase revenue and create room to grow.</p></div><div><b>Explore</b><a href="#services">Services</a><a href="#work">Selected work</a><a href="#founder">Founder</a><a href="#process">Process</a></div><div><b>Connect</b><a href="#"><Linkedin size={14}/> LinkedIn</a><a href="#"><Github size={14}/> GitHub</a><a href="mailto:victoriyoyo2493@gmail.com"><Mail size={14}/> Email</a><a href={whatsappUrl} target="_blank" rel="noopener noreferrer"><MessageCircle size={14}/> WhatsApp</a></div><a href="#top" className="to-top" aria-label="Back to top"><ArrowUpRight/></a></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} Navill Tech. All rights reserved.</span><span>Founded by Victor Tonye Iyoyo. <Globe2 size={14}/></span></div></footer>
   </main>;
 }
