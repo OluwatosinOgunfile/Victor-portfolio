@@ -13,6 +13,7 @@ import {
   Workflow, X, Zap,
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import previewStyles from "@/components/project-preview.module.css";
 
 const fade = {
   hidden: { opacity: 0, y: 28 },
@@ -33,8 +34,8 @@ const services = [
 ];
 
 const projects = [
-  { number: "01", name: "Savoury", type: "Restaurant operations", title: "One platform. Every order under control.", copy: "A complete ordering and operations system that connects customers, kitchen teams and management in real time.", result: "Ordering and operations in one workflow", color: "blue", tags: ["Online ordering", "Kitchen display", "Analytics"], liveUrl: "https://savoury-ten.vercel.app/" },
-  { number: "02", name: "HarvestNearU", type: "Local produce marketplace", title: "Fresh local produce, found closer to home.", copy: "A marketplace that helps customers discover fresh produce from trusted nearby farmers, with convenient pickup and doorstep delivery.", result: "Direct farmer-to-buyer access", color: "purple", tags: ["Marketplace", "Local discovery", "Ordering"], liveUrl: "https://www.harvestnearu.com/" },
+  { number: "01", name: "Savoury", type: "Restaurant operations", title: "One platform. Every order under control.", copy: "A complete ordering and operations system that connects customers, kitchen teams and management in real time.", result: "Ordering and operations in one workflow", color: "blue", tags: ["Online ordering", "Kitchen display", "Analytics"], liveUrl: "https://savoury-ten.vercel.app/", preview: "live" },
+  { number: "02", name: "HarvestNearU", type: "Local produce marketplace", title: "Fresh local produce, found closer to home.", copy: "A marketplace that helps customers discover fresh produce from trusted nearby farmers, with convenient pickup and doorstep delivery.", result: "Direct farmer-to-buyer access", color: "purple", tags: ["Marketplace", "Local discovery", "Ordering"], liveUrl: "https://www.harvestnearu.com/", preview: "image" },
 ];
 
 const faqs = [
@@ -163,9 +164,9 @@ export function Portfolio() {
     <section id="work" className="section work">
       <div className="container">
         <Reveal className="section-heading split"><div><span className="kicker">SELECTED WORK</span><h2>Built for measurable <span className="muted">impact.</span></h2></div><p>Every product starts with a business problem and ends with a result you can see, measure and build on.</p></Reveal>
-        <div className="projects">{projects.map((p,i)=><Reveal key={p.name}><article className={`project project-${p.color}`}>
+        <div className="projects">{projects.map((p)=><Reveal key={p.name}><article className={`project project-${p.color}`}>
           <div className="project-copy"><span className="project-index">{p.number} / CASE STUDY</span><div className="project-brand"><span>{p.name[0]}</span><div><b>{p.name}</b><small>{p.type}</small></div></div><h3>{p.title}</h3><p>{p.copy}</p><div className="tags">{p.tags.map(t=><span key={t}>{t}</span>)}</div><div className="result"><Rocket size={18}/><div><small>BUSINESS RESULT</small><b>{p.result}</b></div></div>{p.liveUrl?<a className="text-link" href={p.liveUrl} target="_blank" rel="noopener noreferrer" data-track={p.name} data-event="project_view">Visit live project <ArrowUpRight size={17}/></a>:<span className="text-link text-link-muted">Case study coming soon</span>}</div>
-          <div className="project-visual"><div className="app-window"><div className="window-bar"><i/><i/><i/></div><div className="app-shell"><div className="app-nav"><b>{p.name[0]}</b><i/><i/><i/><i/></div><div className="app-content"><span>OVERVIEW</span><h4>{i===0?'Good evening, Victor':i===1?'Marketplace overview':'Sales pipeline'}</h4><div className="app-metrics"><i/><i/><i/></div><div className="app-chart"><span/><span/><span/><span/><span/><span/><span/></div><div className="app-table"><i/><i/><i/></div></div></div></div></div>
+          <div className="project-visual"><div className={previewStyles.preview}><div className={previewStyles.bar}><i/><i/><i/><i className={previewStyles.address}/><span>{p.preview==="live"?"LIVE INTERACTIVE PREVIEW":"LIVE SITE PREVIEW"}</span></div>{p.preview==="live"?<iframe src={p.liveUrl!} title={`${p.name} interactive website preview`} loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"/>:<a className={previewStyles.imageLink} href={p.liveUrl!} target="_blank" rel="noopener noreferrer" aria-label={`Open ${p.name} live website`}><Image src="/harvest-preview.png" alt="HarvestNearU live website homepage" fill sizes="(max-width: 900px) 100vw, 55vw"/></a>}</div></div>
         </article></Reveal>)}</div>
       </div>
     </section>
