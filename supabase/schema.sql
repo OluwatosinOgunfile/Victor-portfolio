@@ -5,7 +5,7 @@ create type public.enquiry_status as enum ('New', 'Contacted', 'Qualified', 'Won
 create table public.enquiries (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(name) between 2 and 100),
-  email text not null check (char_length(email) <= 254),
+  email text check (char_length(email) <= 254),
   phone text check (char_length(phone) <= 30),
   preferred_contact text not null default 'Email' check (preferred_contact in ('Email','WhatsApp','Phone')),
   company text check (char_length(company) <= 120),
@@ -17,6 +17,7 @@ create table public.enquiries (
   priority text not null default 'Normal' check (priority in ('Low','Normal','High','Urgent')),
   follow_up_at timestamptz,
   tags text[] not null default '{}',
+  constraint enquiries_contact_required check (email is not null or phone is not null),
   country text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

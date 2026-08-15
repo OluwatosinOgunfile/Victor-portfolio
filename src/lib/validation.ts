@@ -3,7 +3,7 @@ import { z } from "zod";
 const clean = (max: number) => z.string().trim().max(max);
 export const enquirySchema = z.object({
   name: clean(100).min(2),
-  email: z.email().max(254),
+  email: z.union([z.literal(""), z.email().max(254)]).default(""),
   phone: clean(30).optional().default(""),
   preferredContact: z.enum(["Email", "WhatsApp", "Phone"]).default("Email"),
   company: clean(120).optional().default(""),
@@ -11,6 +11,10 @@ export const enquirySchema = z.object({
   stage: clean(120).optional().default(""),
   message: clean(5000).min(20),
   website: z.string().max(0).optional().default(""),
+}).superRefine((value, context) => {
+  if (!value.email && !value.phone) context.addIssue({ code: "custom", path: ["email"], message: "Enter an email address or phone number" });
+  if (value.preferredContact === "Email" && !value.email) context.addIssue({ code: "custom", path: ["email"], message: "Email is required for email replies" });
+  if ((value.preferredContact === "WhatsApp" || value.preferredContact === "Phone") && !value.phone) context.addIssue({ code: "custom", path: ["phone"], message: `A number is required for ${value.preferredContact.toLowerCase()} replies` });
 });
 
 export const analyticsSchema = z.object({

@@ -48,7 +48,7 @@ const faqs = [
 
 const schema = z.object({
   name: z.string().min(2, "Please enter your name"),
-  email: z.email("Enter a valid email"),
+  email: z.union([z.literal(""), z.email("Enter a valid email")]),
   phone: z.string().max(30).optional(),
   preferredContact: z.enum(["Email", "WhatsApp", "Phone"]),
   company: z.string().optional(),
@@ -56,6 +56,10 @@ const schema = z.object({
   service: z.string().min(1, "Choose a service"),
   message: z.string().min(20, "Tell me a little more (at least 20 characters)"),
   website: z.string().optional(),
+}).superRefine((value, context) => {
+  if (!value.email && !value.phone) context.addIssue({ code: "custom", path: ["email"], message: "Enter an email address or phone number" });
+  if (value.preferredContact === "Email" && !value.email) context.addIssue({ code: "custom", path: ["email"], message: "Email is required for email replies" });
+  if ((value.preferredContact === "WhatsApp" || value.preferredContact === "Phone") && !value.phone) context.addIssue({ code: "custom", path: ["phone"], message: `Enter a number for ${value.preferredContact.toLowerCase()} replies` });
 });
 type FormData = z.infer<typeof schema>;
 
@@ -199,8 +203,8 @@ export function Portfolio() {
       <Reveal><form onSubmit={handleSubmit(submit)} className="contact-form" aria-label="Project enquiry form">
         <div className="form-top"><div><span>Tell me about your project</span><small>All fields marked * are required</small></div><Sparkles/></div>
         <input className="form-honeypot" tabIndex={-1} autoComplete="off" aria-hidden="true" {...register('website')} />
-        <div className="form-row"><label>Your name *<input autoComplete="name" {...register('name')} placeholder="e.g. Sarah Johnson"/>{errors.name&&<em>{errors.name.message}</em>}</label><label>Work email *<input type="email" autoComplete="email" {...register('email')} placeholder="sarah@company.com"/>{errors.email&&<em>{errors.email.message}</em>}</label></div>
-        <div className="form-row"><label>Phone or WhatsApp<input type="tel" autoComplete="tel" {...register('phone')} placeholder="+234…"/></label><label>Preferred contact<select {...register('preferredContact')}><option>Email</option><option>WhatsApp</option><option>Phone</option></select></label></div>
+        <div className="form-row"><label>Your name *<input autoComplete="name" {...register('name')} placeholder="e.g. Sarah Johnson"/>{errors.name&&<em>{errors.name.message}</em>}</label><label>Work email<input type="email" autoComplete="email" {...register('email')} placeholder="sarah@company.com"/>{errors.email&&<em>{errors.email.message}</em>}</label></div>
+        <div className="form-row"><label>Phone or WhatsApp number<input type="tel" autoComplete="tel" {...register('phone')} placeholder="+234…"/>{errors.phone&&<em>{errors.phone.message}</em>}</label><label>How should we reply? *<select {...register('preferredContact')}><option>Email</option><option>WhatsApp</option><option value="Phone">Phone call</option></select></label></div>
         <label>Company<input autoComplete="organization" {...register('company')} placeholder="Your company name"/></label>
         <div className="form-row"><label>What do you need? *<select defaultValue="" {...register('service')}><option value="" disabled>Select a service</option><option>Custom web application</option><option>Business automation</option><option>AI integration</option><option>Dashboard or portal</option><option>Something else</option></select>{errors.service&&<em>{errors.service.message}</em>}</label><label>What stage are you at?<select defaultValue="" {...register('stage')}><option value="">Select a stage (optional)</option><option>I have an idea to explore</option><option>I need help defining the solution</option><option>I&apos;m ready to start</option><option>I&apos;m replacing an existing system</option><option>I need improvements to an existing product</option><option>I&apos;m not sure yet</option></select></label></div>
         <label>Tell me about the challenge *<textarea {...register('message')} rows={5} placeholder="What is happening today, and what would a great outcome look like?"/>{errors.message&&<em>{errors.message.message}</em>}</label>

@@ -18,11 +18,11 @@ export async function POST(request: NextRequest) {
 
     const { website: _, preferredContact, ...payload } = parsed.data;
     void _;
-    const { data, error } = await db.from("enquiries").insert({ ...payload, company: payload.company || null, phone: payload.phone || null, preferred_contact: preferredContact, stage: payload.stage || null, country }).select("id").single();
+    const { data, error } = await db.from("enquiries").insert({ ...payload, email: payload.email || null, company: payload.company || null, phone: payload.phone || null, preferred_contact: preferredContact, stage: payload.stage || null, country }).select("id").single();
     if (error) throw error;
     await db.from("analytics_events").insert({ event_name: "enquiry_conversion", page: "/", label: payload.service, session_id: request.headers.get("x-session-id") || crypto.randomUUID(), country, device, browser, ip_hash: ipHash });
     await notifyNewEnquiry(data.id, payload.name);
-    try { await sendVisitorConfirmation(payload.email, payload.name); } catch (error) { console.error("Visitor confirmation failed", error); }
+    if (payload.email) try { await sendVisitorConfirmation(payload.email, payload.name); } catch (error) { console.error("Visitor confirmation failed", error); }
     return NextResponse.json({ ok: true, id: data.id }, { status: 201 });
   } catch (error) {
     console.error("Enquiry submission failed", error);

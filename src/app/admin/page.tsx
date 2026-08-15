@@ -1,18 +1,17 @@
 import { AdminShell } from "./layout";
 import { requireAdmin } from "@/lib/admin";
-import { countBy, getAdminData } from "@/lib/admin-data";
+import { countBy, getDashboardData } from "@/lib/admin-data";
 import { ArrowUpRight, Eye, Inbox, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminPage() {
   await requireAdmin();
-  const { enquiries, events } = await getAdminData();
+  const { enquiries, events, totalEnquiries, unread } = await getDashboardData();
   const views = events.filter(e=>e.event_name === "page_view");
   const visitors = new Set(views.map(e=>e.session_id)).size;
-  const unread = enquiries.filter(e=>!e.is_read).length;
-  const conversion = visitors ? ((enquiries.length / visitors) * 100).toFixed(1) : "0.0";
+  const conversion = visitors ? ((totalEnquiries / visitors) * 100).toFixed(1) : "0.0";
   const countries = countBy(views, "country").slice(0,5);
   const clicks = countBy(events.filter(e=>e.event_name.includes("click")), "label").slice(0,5);
-  const cards=[["Visitors",visitors,Users,"Unique sessions"],["Page views",views.length,Eye,"Last 30 days"],["Enquiries",enquiries.length,Inbox,"All time"],["Conversion",`${conversion}%`,TrendingUp,"Visitor to lead"],["Unread",unread,MousePointerClick,"Needs attention"]] as const;
+  const cards=[["Visitors",visitors,Users,"Unique sessions"],["Page views",views.length,Eye,"Last 30 days"],["Enquiries",totalEnquiries,Inbox,"All time"],["Conversion",`${conversion}%`,TrendingUp,"Visitor to lead"],["Unread",unread,MousePointerClick,"Needs attention"]] as const;
   return <AdminShell unread={unread}><header className="admin-header"><div><p className="admin-kicker">COMMAND CENTRE</p><h1>Good to see you, Victor.</h1><p>Here&apos;s how your portfolio is performing.</p></div><div className="header-date"><span>Today</span><b>{new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})}</b></div></header><section className="admin-kpis">{cards.map(([label,value,Icon,helper],i)=><div className={`admin-card admin-kpi tone-${i}`} key={label}><div className="kpi-head"><span>{label}</span><i><Icon/></i></div><strong>{value}</strong><small>{helper}</small></div>)}</section><section className="admin-grid"><div className="admin-card table-card"><div className="card-heading"><div><p className="admin-kicker">LATEST ACTIVITY</p><h2>Recent enquiries</h2></div><Link href="/admin/enquiries">View all <ArrowUpRight/></Link></div><div className="table-scroll"><table className="admin-table"><thead><tr><th>Lead</th><th>Service</th><th>Country</th><th>Status</th></tr></thead><tbody>{enquiries.slice(0,6).map(e=><tr key={e.id}><td data-label="Lead"><Link href={`/admin/enquiries/${e.id}`}><span className="lead-avatar">{e.name.slice(0,2).toUpperCase()}</span><span><b>{e.name}</b><small>{e.email}</small></span></Link></td><td data-label="Service">{e.service}</td><td data-label="Country">{e.country||"Unknown"}</td><td data-label="Status"><span className={`status status-${String(e.status).toLowerCase()}`}>{e.status}</span></td></tr>)}{!enquiries.length&&<tr><td colSpan={4}><div className="empty-state"><Inbox/><b>No enquiries yet</b><span>New project enquiries will appear here.</span></div></td></tr>}</tbody></table></div></div><div className="insights-column"><div className="admin-card"><div className="card-heading"><div><p className="admin-kicker">AUDIENCE</p><h2>Top countries</h2></div></div><div className="rank-list">{countries.map(([name,n],i)=><div key={name}><span><i>{i+1}</i>{name}</span><b>{n}</b></div>)}{!countries.length&&<p className="empty-copy">Traffic locations will appear here.</p>}</div></div><div className="admin-card"><div className="card-heading"><div><p className="admin-kicker">ENGAGEMENT</p><h2>Popular actions</h2></div></div><div className="rank-list">{clicks.map(([name,n],i)=><div key={name}><span><i>{i+1}</i>{name}</span><b>{n}</b></div>)}{!clicks.length&&<p className="empty-copy">Visitor interactions will appear here.</p>}</div></div></div></section></AdminShell>;
 }

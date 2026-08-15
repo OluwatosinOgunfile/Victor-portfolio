@@ -7,7 +7,9 @@ export const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "victoriyoyo2493@gmail.co
 export async function requireAdmin() {
   if (!isSupabaseConfigured()) redirect("/admin/login?error=configuration");
   const client = await createUserClient();
-  const { data: { user } } = await client.auth.getUser();
-  if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL) redirect("/admin/login");
-  return user;
+  const { data } = await client.auth.getClaims();
+  const claims = data?.claims;
+  const email = typeof claims?.email === "string" ? claims.email.toLowerCase() : "";
+  if (!claims || email !== ADMIN_EMAIL) redirect("/admin/login");
+  return claims;
 }
