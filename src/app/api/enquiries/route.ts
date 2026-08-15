@@ -3,9 +3,11 @@ import { createServiceClient } from "@/lib/supabase-server";
 import { enquirySchema } from "@/lib/validation";
 import { requestMeta } from "@/lib/request";
 import { notifyNewEnquiry } from "@/lib/notifications";
+import { isSameOrigin } from "@/lib/security";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) return NextResponse.json({ error: "Request not allowed." }, { status: 403 });
     const parsed = enquirySchema.safeParse(await request.json());
     if (!parsed.success || parsed.data.website) return NextResponse.json({ error: "Please check the form and try again." }, { status: 400 });
     const db = createServiceClient();

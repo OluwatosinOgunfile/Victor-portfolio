@@ -7,7 +7,7 @@
 3. In **Authentication → Users**, create one user:
    - Email: `victoriyoyo2493@gmail.com`
    - Use a strong temporary password and change it after first login.
-4. In **Authentication → URL Configuration**, set the site URL to `https://victor-portfolio-seven-nu.vercel.app` and add `https://victor-portfolio-seven-nu.vercel.app/admin/reset-password` as a redirect URL.
+4. In **Authentication → URL Configuration**, set the site URL to `https://victor-portfolio-one-beta.vercel.app` and add `https://victor-portfolio-one-beta.vercel.app/admin/reset-password` as a redirect URL.
 5. Copy the project URL, anon key, and service-role key into the matching Vercel variables from `.env.example`.
 
 ## 2. Gmail fallback
@@ -25,8 +25,12 @@
 
 ## 4. Remaining Vercel variables
 
-- `NEXT_PUBLIC_SITE_URL=https://victor-portfolio-seven-nu.vercel.app`
+- `NEXT_PUBLIC_SITE_URL=https://victor-portfolio-one-beta.vercel.app`
 - `ADMIN_EMAIL=victoriyoyo2493@gmail.com`
 - `ANALYTICS_HASH_SECRET`: generate a random value of at least 32 characters.
 
 Redeploy after adding variables. Visit `/admin/login` to sign in.
+
+## 5. Apply the latest database migration
+
+For an existing project, run `supabase/migrations/20260815_notification_status_and_retention.sql` in the Supabase SQL Editor. This enables accurate Twilio delivery states and schedules automatic deletion of analytics older than 12 months. Enable the `pg_cron` extension in Supabase first if needed.

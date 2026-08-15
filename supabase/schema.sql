@@ -42,7 +42,7 @@ create table public.notification_deliveries (
   id uuid primary key default gen_random_uuid(),
   enquiry_id uuid not null references public.enquiries(id) on delete cascade,
   channel text not null check (channel in ('whatsapp','email')),
-  status text not null check (status in ('sent','failed')),
+  status text not null check (status in ('queued','sent','delivered','read','failed','undelivered')),
   provider_id text,
   error_message text,
   created_at timestamptz not null default now()
@@ -70,3 +70,5 @@ create policy "admin reads deliveries" on public.notification_deliveries for sel
 create or replace function public.purge_old_analytics() returns void language sql security definer set search_path = public as $$
   delete from public.analytics_events where created_at < now() - interval '12 months';
 $$;
+
+-- Enable pg_cron in Supabase, then schedule public.purge_old_analytics monthly.

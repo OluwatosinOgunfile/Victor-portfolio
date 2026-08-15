@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
   ArrowRight, ArrowUpRight, BarChart3, Bot, Check, ChevronDown, CircleDollarSign,
-  Clock3, Code2, Database, Gauge, Github, Globe2, Layers3, Linkedin, Mail,
+  Clock3, Code2, Database, Gauge, Github, Globe2, Layers3, Mail,
   Menu, MessageCircle, Phone, Rocket, ShieldCheck, Sparkles, Target,
   Workflow, X, Zap,
 } from "lucide-react";
@@ -33,9 +33,8 @@ const services = [
 ];
 
 const projects = [
-  { number: "01", name: "Savoury", type: "Restaurant operations", title: "One platform. Every order under control.", copy: "A complete ordering and operations system that connects customers, kitchen teams and management in real time.", result: "42% faster order processing", color: "blue", tags: ["Online ordering", "Kitchen display", "Analytics"], liveUrl: "https://savoury-ten.vercel.app/" },
+  { number: "01", name: "Savoury", type: "Restaurant operations", title: "One platform. Every order under control.", copy: "A complete ordering and operations system that connects customers, kitchen teams and management in real time.", result: "Ordering and operations in one workflow", color: "blue", tags: ["Online ordering", "Kitchen display", "Analytics"], liveUrl: "https://savoury-ten.vercel.app/" },
   { number: "02", name: "HarvestNearU", type: "Local produce marketplace", title: "Fresh local produce, found closer to home.", copy: "A marketplace that helps customers discover fresh produce from trusted nearby farmers, with convenient pickup and doorstep delivery.", result: "Direct farmer-to-buyer access", color: "purple", tags: ["Marketplace", "Local discovery", "Ordering"], liveUrl: "https://www.harvestnearu.com/" },
-  { number: "03", name: "Clario", type: "Client relationship platform", title: "Every lead. Every touchpoint. One clear view.", copy: "A tailored CRM that gives sales teams the context and automation they need to follow up consistently and close faster.", result: "2.4× faster follow-up", color: "cyan", tags: ["Sales pipeline", "Automation", "Customer portal"], liveUrl: null },
 ];
 
 const faqs = [
@@ -69,10 +68,12 @@ export function Portfolio() {
   const submit = async (values: FormData) => {
     setSubmitError("");
     const session = sessionStorage.getItem("victor_session") || crypto.randomUUID();
-    const response = await fetch("/api/enquiries", { method: "POST", headers: { "content-type": "application/json", "x-session-id": session }, body: JSON.stringify(values) });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) { setSubmitError(result.error || "Something went wrong. Please try again."); return; }
-    setSent(true); reset();
+    try {
+      const response = await fetch("/api/enquiries", { method: "POST", headers: { "content-type": "application/json", "x-session-id": session }, body: JSON.stringify(values) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) { setSubmitError(result.error || "Something went wrong. Please try again."); return; }
+      setSent(true); reset();
+    } catch { setSubmitError("You appear to be offline. Please reconnect and try again, or contact us directly."); }
   };
 
   useEffect(() => {
@@ -134,7 +135,7 @@ export function Portfolio() {
         </motion.div>
       </div>
       <div className="container stats">
-        {[['50+','Systems delivered'],['100%','Client satisfaction'],['5+','Industries transformed'],['24/7','Systems that keep working']].map(([a,b])=><div key={b}><strong>{a}</strong><span>{b}</span></div>)}
+        {[['Full-stack','From strategy to deployment'],['Business-first','Technology tied to outcomes'],['5+ years','Building digital products'],['Global','Remote collaboration from Lagos']].map(([a,b])=><div key={b}><strong>{a}</strong><span>{b}</span></div>)}
       </div>
     </section>
 
@@ -189,12 +190,6 @@ export function Portfolio() {
 
     <section className="section tech"><div className="container"><Reveal className="section-heading centered"><span className="kicker">MODERN. RELIABLE. PROVEN.</span><h2>The right tools for the job.</h2><p>A modern technology stack chosen for speed, security and long-term maintainability.</p></Reveal><Reveal><div className="tech-cloud">{['React','Next.js','TypeScript','Node.js','PostgreSQL','Supabase','Tailwind CSS','REST APIs','Stripe','Cloud'].map((t,i)=><div key={t} className={`tech-pill p${i%4}`}><Code2 size={17}/>{t}</div>)}</div></Reveal></div></section>
 
-    <section className="section testimonials"><div className="container"><Reveal className="section-heading centered"><span className="kicker">CLIENT STORIES</span><h2>Trusted to solve problems that <span className="muted">matter.</span></h2></Reveal><div className="testimonial-grid">{[
-      ['“Victor understood the business problem before talking about technology. The platform has completely changed how our team handles orders.”','Amara Davis','Founder, Savoury Foods','AD'],
-      ['“We went from juggling five spreadsheets to seeing the whole operation in one place. It saves us hours every single day.”','Michael Kane','Operations Director, Northstar','MK'],
-      ['“Communication was exceptional from day one. We launched on schedule and the system has already paid for itself.”','Julia Okafor','CEO, Clario Partners','JO']
-    ].map(([q,n,r,a],i)=><Reveal key={n} delay={i*.06}><figure className="testimonial"><div className="stars">★★★★★</div><blockquote>{q}</blockquote><figcaption><span>{a}</span><div><b>{n}</b><small>{r}</small></div></figcaption></figure></Reveal>)}</div></div></section>
-
     <section className="section faq"><div className="container faq-grid"><Reveal className="section-heading"><span className="kicker">FREQUENTLY ASKED</span><h2>Good questions. <span className="muted">Clear answers.</span></h2><p>Still wondering if this is the right fit?</p><a href="#contact" className="text-link">Let&apos;s talk it through <ArrowRight size={17}/></a></Reveal><div className="accordion">{faqs.map(([q,a],i)=><div className={`faq-item ${faq===i?'open':''}`} key={q}><button onClick={()=>setFaq(faq===i?null:i)} aria-expanded={faq===i}><span>{q}</span><ChevronDown/></button>{faq===i&&<motion.p initial={{opacity:0,height:0}} animate={{opacity:1,height:'auto'}}>{a}</motion.p>}</div>)}</div></div></section>
 
     <section id="contact" className="section contact"><div className="contact-glow"/><div className="container contact-grid"><Reveal><div className="section-heading"><span className="kicker">START A CONVERSATION</span><h2>Let&apos;s build the system your business <span className="gradient-text">deserves.</span></h2><p>Tell me what&apos;s slowing you down or where you want to go next. You&apos;ll get honest direction, clear next steps and no hard sell.</p></div><div className="contact-points"><a href="mailto:victoriyoyo2493@gmail.com" data-track="email" data-event="contact_click"><Mail/><div><small>EMAIL</small><b>victoriyoyo2493@gmail.com</b></div></a><a href="tel:+2349022301666" data-track="phone" data-event="contact_click"><Phone/><div><small>PHONE</small><b>+234 902 230 1666</b></div></a><a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="Chat with Victor on WhatsApp" data-track="whatsapp" data-event="contact_click"><MessageCircle/><div><small>WHATSAPP</small><b>Chat with Victor</b></div></a></div><div className="availability"><span className="pulse"/><div><b>Currently accepting new projects</b><small>Typical response time: within 24 hours</small></div></div></Reveal>
@@ -202,6 +197,6 @@ export function Portfolio() {
     </div></section>
 
     <a className="whatsapp-float" href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="Chat with Victor on WhatsApp" data-track="floating_whatsapp" data-event="contact_click"><MessageCircle/><span>Chat on WhatsApp</span></a>
-    <footer><div className="container footer-top"><div><BrandLogo href="#top"/><p>Business systems that save time, increase revenue and create room to grow.</p></div><div><b>Explore</b><a href="#services">Services</a><a href="#work">Selected work</a><a href="#founder">Founder</a><a href="#process">Process</a></div><div><b>Connect</b><a href="#"><Linkedin size={14}/> LinkedIn</a><a href="#"><Github size={14}/> GitHub</a><a href="mailto:victoriyoyo2493@gmail.com"><Mail size={14}/> Email</a><a href={whatsappUrl} target="_blank" rel="noopener noreferrer"><MessageCircle size={14}/> WhatsApp</a></div><a href="#top" className="to-top" aria-label="Back to top"><ArrowUpRight/></a></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} Navill Tech. All rights reserved.</span><span>Founded by Victor Tonye Iyoyo. <Globe2 size={14}/></span></div></footer>
+    <footer><div className="container footer-top"><div><BrandLogo href="#top"/><p>Business systems that save time, increase revenue and create room to grow.</p></div><div><b>Explore</b><a href="#services">Services</a><a href="#work">Selected work</a><a href="#founder">Founder</a><a href="#process">Process</a></div><div><b>Connect</b><a href="https://github.com/OluwatosinOgunfile" target="_blank" rel="noopener noreferrer"><Github size={14}/> GitHub</a><a href="mailto:victoriyoyo2493@gmail.com"><Mail size={14}/> Email</a><a href={whatsappUrl} target="_blank" rel="noopener noreferrer"><MessageCircle size={14}/> WhatsApp</a></div><a href="#top" className="to-top" aria-label="Back to top"><ArrowUpRight/></a></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} Navill Tech. All rights reserved.</span><span>Founded by Victor Tonye Iyoyo. <Globe2 size={14}/></span></div></footer>
   </main>;
 }
