@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import previewStyles from "@/components/project-preview.module.css";
+import mobileStyles from "@/components/portfolio-mobile.module.css";
+import phoneStyles from "@/components/portfolio-phone-fix.module.css";
 
 const fade = {
   hidden: { opacity: 0, y: 28 },
@@ -89,7 +91,7 @@ export function Portfolio() {
     return () => window.removeEventListener("hashchange", close);
   }, []);
 
-  return <main>
+  return <main className={`${mobileStyles.site} ${phoneStyles.site}`}>
     <motion.div className="scroll-progress" style={{ scaleX: progress }} />
     <div className="noise" />
 
@@ -170,7 +172,7 @@ export function Portfolio() {
         <Reveal className="section-heading split"><div><span className="kicker">SELECTED WORK</span><h2>Built for measurable <span className="muted">impact.</span></h2></div><p>Every product starts with a business problem and ends with a result you can see, measure and build on.</p></Reveal>
         <div className="projects">{projects.map((p)=><Reveal key={p.name}><article className={`project project-${p.color}`}>
           <div className="project-copy"><span className="project-index">{p.number} / CASE STUDY</span><div className="project-brand"><span>{p.name[0]}</span><div><b>{p.name}</b><small>{p.type}</small></div></div><h3>{p.title}</h3><p>{p.copy}</p><div className="tags">{p.tags.map(t=><span key={t}>{t}</span>)}</div><div className="result"><Rocket size={18}/><div><small>BUSINESS RESULT</small><b>{p.result}</b></div></div>{p.liveUrl?<a className="text-link" href={p.liveUrl} target="_blank" rel="noopener noreferrer" data-track={p.name} data-event="project_view">Visit live project <ArrowUpRight size={17}/></a>:<span className="text-link text-link-muted">Case study coming soon</span>}</div>
-          <div className="project-visual"><div className={previewStyles.preview}><div className={previewStyles.bar}><i/><i/><i/><i className={previewStyles.address}/><span>{p.preview==="live"?"LIVE INTERACTIVE PREVIEW":"LIVE SITE PREVIEW"}</span></div>{p.preview==="live"?<iframe src={p.liveUrl!} title={`${p.name} interactive website preview`} loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"/>:<a className={previewStyles.imageLink} href={p.liveUrl!} target="_blank" rel="noopener noreferrer" aria-label={`Open ${p.name} live website`}><Image src="/harvest-preview.png" alt="HarvestNearU live website homepage" fill sizes="(max-width: 900px) 100vw, 55vw"/></a>}</div></div>
+          <div className="project-visual"><div className={previewStyles.preview}><div className={previewStyles.bar}><i/><i/><i/><i className={previewStyles.address}/><span>{p.preview==="live"?"LIVE INTERACTIVE PREVIEW":"LIVE SITE PREVIEW"}</span></div>{p.preview==="live"?<><iframe src={p.liveUrl!} title={`${p.name} interactive website preview`} loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"/><a className={previewStyles.mobileImage} href={p.liveUrl!} target="_blank" rel="noopener noreferrer" aria-label={`Open ${p.name} live website`}><Image src="/savoury-preview.png" alt="Savoury live website homepage" fill sizes="100vw"/></a></>:<a className={previewStyles.imageLink} href={p.liveUrl!} target="_blank" rel="noopener noreferrer" aria-label={`Open ${p.name} live website`}><Image src="/harvest-preview.png" alt="HarvestNearU live website homepage" fill sizes="(max-width: 900px) 100vw, 55vw"/></a>}</div></div>
         </article></Reveal>)}</div>
       </div>
     </section>

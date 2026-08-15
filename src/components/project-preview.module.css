@@ -1,10 +1,12 @@
-.preview{width:650px;height:410px;border:1px solid rgba(255,255,255,.15);border-radius:14px 0 0 14px;background:#0c1118;box-shadow:0 30px 80px #0009;overflow:hidden;transform:perspective(1000px) rotateY(-3deg);position:relative}
+.preview{width:100%;max-width:650px;height:410px;border:1px solid rgba(255,255,255,.15);border-radius:14px 0 0 14px;background:#0c1118;box-shadow:0 30px 80px #0009;overflow:hidden;transform:perspective(1000px) rotateY(-3deg);position:relative}
 .bar{height:30px;background:#151b24;display:flex;align-items:center;gap:6px;padding:0 11px;color:#667384;font-size:7px;letter-spacing:.12em}
 .bar>i{width:6px;height:6px;border-radius:50%;background:#45505e;flex:0 0 auto}
 .bar .address{width:34%;height:12px;margin-left:8px;border-radius:6px;background:#202833}
 .bar span{margin-left:auto;color:#69aafa;font-weight:800}
 .preview iframe,.imageLink{display:block;width:100%;height:calc(100% - 30px);border:0;background:white}
 .imageLink{position:relative;overflow:hidden}
+.mobileImage{display:none;position:relative;width:100%;height:calc(100% - 30px);overflow:hidden}
+.mobileImage img{object-fit:cover;object-position:top center}
 .imageLink img{object-fit:cover;object-position:top center;transition:transform .7s ease}
 .imageLink:hover img{transform:scale(1.025)}
-@media(max-width:620px){.preview{height:315px}.bar span{display:none}}
+@media(max-width:620px){.preview{height:260px;max-width:100%;border-radius:12px;transform:none}.bar span{display:none}.preview iframe{display:none}.mobileImage{display:block}}
