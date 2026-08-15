@@ -8,7 +8,18 @@ export function siteUrl() {
 export function isSameOrigin(request: NextRequest) {
   const origin = request.headers.get("origin");
   if (!origin) return true;
-  try { return new URL(origin).origin === new URL(siteUrl()).origin; }
+  try {
+    const originUrl = new URL(origin);
+    const requestHosts = new Set([
+      request.headers.get("x-forwarded-host")?.split(",")[0]?.trim(),
+      request.headers.get("host"),
+      request.nextUrl.host,
+      new URL(siteUrl()).host,
+      process.env.VERCEL_URL,
+      process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    ].filter((value): value is string => Boolean(value)).map(value => value.toLowerCase()));
+    return requestHosts.has(originUrl.host.toLowerCase());
+  }
   catch { return false; }
 }
 
