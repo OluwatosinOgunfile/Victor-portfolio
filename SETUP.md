@@ -34,3 +34,5 @@ Redeploy after adding variables. Visit `/admin/login` to sign in.
 ## 5. Apply the latest database migration
 
 For an existing project, run `supabase/migrations/20260815_notification_status_and_retention.sql` in the Supabase SQL Editor. This enables accurate Twilio delivery states and schedules automatic deletion of analytics older than 12 months. Enable the `pg_cron` extension in Supabase first if needed.
+
+Then run `supabase/migrations/20260815_lead_workflow.sql` to add preferred contact details, priorities, follow-up dates, and tags to enquiries.

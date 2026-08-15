@@ -15,6 +15,7 @@ export async function PATCH(request:NextRequest,{params}:{params:Promise<{id:str
   if(action.action==="status")({error}=await db.from("enquiries").update({status:action.status,updated_at:new Date().toISOString()}).eq("id",id));
   if(action.action==="read")({error}=await db.from("enquiries").update({is_read:action.isRead,updated_at:new Date().toISOString()}).eq("id",id));
   if(action.action==="note")({error}=await db.from("enquiry_notes").insert({enquiry_id:id,body:action.body}));
+  if(action.action==="lead_details")({error}=await db.from("enquiries").update({priority:action.priority,follow_up_at:action.followUpAt,tags:action.tags,updated_at:new Date().toISOString()}).eq("id",id));
   if(action.action==="retry"){const result=await db.from("enquiries").select("name").eq("id",id).single();error=result.error;if(result.data)await notifyNewEnquiry(id,result.data.name)}
   if(error)return NextResponse.json({error:error.message},{status:500});
   return NextResponse.json({ok:true});

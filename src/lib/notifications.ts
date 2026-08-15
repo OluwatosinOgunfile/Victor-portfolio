@@ -39,3 +39,12 @@ export async function notifyNewEnquiry(enquiryId: string, name: string) {
     catch (emailError) { await record(enquiryId, "email", "failed", undefined, emailError); return { channel: null, sent: false }; }
   }
 }
+
+export async function sendVisitorConfirmation(email: string, name: string) {
+  const user = process.env.GMAIL_SMTP_USER; const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass) return false;
+  const safeName = escapeHtml(name);
+  const transport = nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+  await transport.sendMail({ from: `Navill Tech <${user}>`, to: email, replyTo: process.env.ADMIN_EMAIL || user, subject: "We received your project enquiry", text: `Hello ${name},\n\nThank you for contacting Navill Tech. Your project enquiry has been received and Victor will review it shortly. You can expect a response within 24 hours.\n\nNavill Tech`, html: `<p>Hello ${safeName},</p><p>Thank you for contacting Navill Tech. Your project enquiry has been received and Victor will review it shortly.</p><p>You can expect a response within 24 hours.</p><p>Navill Tech</p>` });
+  return true;
+}

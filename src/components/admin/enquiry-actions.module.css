@@ -1,0 +1,7 @@
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0;padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018)}
+.controls label{display:flex;flex-direction:column;gap:7px;color:#697687;font-size:8px;text-transform:uppercase;letter-spacing:.08em}
+.controls label:last-of-type{grid-column:1/-1}
+.controls input,.controls select{width:100%;border:1px solid rgba(255,255,255,.09);border-radius:8px;background:#0b1017;color:white;padding:10px;font-size:10px;outline:none}
+.controls button{grid-column:1/-1;border:1px solid rgba(82,151,235,.16);border-radius:8px;background:rgba(65,139,228,.12);color:#91c1f8;padding:10px 13px;font-size:9px;font-weight:800;cursor:pointer}
+.controls button:disabled{opacity:.55;cursor:wait}
+@media(max-width:600px){.controls{grid-template-columns:1fr}.controls label:last-of-type,.controls button{grid-column:auto}}
