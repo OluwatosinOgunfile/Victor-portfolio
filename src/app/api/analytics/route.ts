@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (!isSameOrigin(request) || isLikelyBot(request.headers.get("user-agent") || "")) return new NextResponse(null, { status: 204 });
     const parsed = analyticsSchema.safeParse(await request.json());
     if (!parsed.success) return new NextResponse(null, { status: 204 });
-    const { ipHash, country, device, browser } = requestMeta(request);
+    const { ipHash, country, region, city, device, browser } = requestMeta(request);
     const db = createServiceClient();
     const since = new Date(Date.now() - 15 * 60_000).toISOString();
     const { count } = await db.from("analytics_events").select("id", { count: "exact", head: true }).eq("ip_hash", ipHash).gte("created_at", since);
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       const { count: duplicate } = await db.from("analytics_events").select("id", { count: "exact", head: true }).eq("session_id", parsed.data.sessionId).eq("event_name", "page_view").eq("page", parsed.data.page).gte("created_at", recent);
       if (duplicate) return new NextResponse(null, { status: 204 });
     }
-    await db.from("analytics_events").insert({ event_name: parsed.data.eventName, page: parsed.data.page, label: parsed.data.label || null, session_id: parsed.data.sessionId, referrer: referrerDomain(parsed.data.referrer), country, device, browser, ip_hash: ipHash });
+    await db.from("analytics_events").insert({ event_name: parsed.data.eventName, page: parsed.data.page, label: parsed.data.label || null, session_id: parsed.data.sessionId, referrer: referrerDomain(parsed.data.referrer), country, region, city, device, browser, ip_hash: ipHash });
   } catch {}
   return new NextResponse(null, { status: 204 });
 }

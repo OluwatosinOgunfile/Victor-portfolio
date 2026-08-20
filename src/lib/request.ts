@@ -9,5 +9,11 @@ export function requestMeta(request: NextRequest) {
   const ua = request.headers.get("user-agent") || "";
   const device = /mobile|android|iphone/i.test(ua) ? "Mobile" : /tablet|ipad/i.test(ua) ? "Tablet" : "Desktop";
   const browser = /edg/i.test(ua) ? "Edge" : /chrome/i.test(ua) ? "Chrome" : /safari/i.test(ua) ? "Safari" : /firefox/i.test(ua) ? "Firefox" : "Other";
-  return { ipHash, device, browser, country: request.headers.get("x-vercel-ip-country") || "Unknown" };
+  const decodeHeader = (name: string) => {
+    const value = request.headers.get(name);
+    if (!value) return null;
+    try { return decodeURIComponent(value.replace(/\+/g, " ")).slice(0, 120); }
+    catch { return value.slice(0, 120); }
+  };
+  return { ipHash, device, browser, country: decodeHeader("x-vercel-ip-country") || "Unknown", region: decodeHeader("x-vercel-ip-country-region"), city: decodeHeader("x-vercel-ip-city") };
 }

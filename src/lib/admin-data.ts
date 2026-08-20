@@ -1,6 +1,6 @@
 import { createServiceClient } from "./supabase-server";
 
-const eventFields = "event_name,session_id,country,device,referrer,label,created_at";
+const eventFields = "event_name,session_id,country,region,city,device,referrer,label,created_at";
 
 async function recentEvents() {
   const db = createServiceClient();
@@ -14,7 +14,7 @@ export async function getDashboardData() {
   const db = createServiceClient();
   const [events, recent, total, unread] = await Promise.all([
     recentEvents(),
-    db.from("enquiries").select("id,name,email,service,country,status,is_read,created_at").order("created_at", { ascending: false }).limit(6),
+    db.from("enquiries").select("id,name,email,service,country,region,city,status,is_read,created_at").order("created_at", { ascending: false }).limit(6),
     db.from("enquiries").select("id", { count: "exact", head: true }),
     db.from("enquiries").select("id", { count: "exact", head: true }).eq("is_read", false),
   ]);
@@ -42,4 +42,16 @@ export function countBy(items: Record<string, unknown>[], key: string) {
   const map = new Map<string, number>();
   items.forEach(item => { const value = String(item[key] || "Unknown"); map.set(value, (map.get(value) || 0) + 1); });
   return [...map.entries()].sort((a,b)=>b[1]-a[1]);
+}
+
+const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
+export function countryName(code: unknown) {
+  const value = String(code || "Unknown");
+  if (!/^[A-Za-z]{2}$/.test(value)) return value;
+  try { return countryNames.of(value.toUpperCase()) || value; } catch { return value; }
+}
+
+export function locationName(item: { city?: unknown; region?: unknown; country?: unknown }) {
+  const parts = [item.city, item.region, countryName(item.country)].map(value => String(value || "").trim()).filter(value => value && value !== "Unknown");
+  return [...new Set(parts)].join(", ") || "Unknown";
 }

@@ -5,6 +5,7 @@ import { AdminShell } from "../../layout";
 import { requireAdmin } from "@/lib/admin";
 import { createServiceClient } from "@/lib/supabase-server";
 import { EnquiryActions } from "@/components/admin/enquiry-actions";
+import { locationName } from "@/lib/admin-data";
 
 export default async function EnquiryPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin(); const { id } = await params; const db = createServiceClient();
@@ -17,6 +18,7 @@ export default async function EnquiryPage({ params }: { params: Promise<{ id: st
     db.from("enquiries").select("id", { count: "exact", head: true }).eq("is_read", false),
   ]);
   const whatsapp = enquiry.phone ? `https://wa.me/${String(enquiry.phone).replace(/\D/g, "")}` : null;
+  enquiry.country = locationName(enquiry);
   const deliveryOk = new Set(["queued", "sent", "delivered", "read"]);
   return <AdminShell unread={unread || 0}>
     <Link href="/admin/enquiries" className="back-link"><ArrowLeft/>Back to enquiries</Link>

@@ -19,6 +19,8 @@ create table public.enquiries (
   tags text[] not null default '{}',
   constraint enquiries_contact_required check (email is not null or phone is not null),
   country text,
+  region text,
+  city text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -40,6 +42,8 @@ create table public.analytics_events (
   device text,
   browser text,
   country text,
+  region text,
+  city text,
   ip_hash text,
   created_at timestamptz not null default now()
 );
